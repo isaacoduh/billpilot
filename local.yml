@@ -9,8 +9,10 @@ services:
     volumes:
       - /app/node_modules
       - .:/app
-    ports:
-      - "1008:1008"
+    depends_on:
+      - mongodb
+    # ports:
+    #     - "1008:1008"
     environment:
       NODE_ENV: ${NODE_ENV}
       MONGO_URI: mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@mongodb
@@ -18,11 +20,22 @@ services:
     networks:
       - billpilot_nw
 
+  client:
+    build:
+      context: ./client
+      dockerfile: ./docker/local/Dockerfile
+    restart: on-failure
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    networks:
+      - billpilot_nw
+
   mongodb:
     image: mongo:5.0.6-focal
     restart: always
     ports:
-      - "27019:27017"
+      - "27018:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
@@ -47,10 +60,25 @@ services:
       - billpilot_nw
 
   mailhog:
-    image: mailhog/mailhog
+    image: mailhog/mailhog:v1.0.0
     ports:
       - "8025:8025"
       - "1025:1025"
+    networks:
+      - billpilot_nw
+
+  nginx:
+    build:
+      context: ./docker/local/nginx
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    restart: always
+    depends_on:
+      - api
+    volumes:
+      - static_volume:/app/staticfiles
+      - pdf_volume:/app/docs
     networks:
       - billpilot_nw
 
@@ -60,3 +88,5 @@ networks:
 
 volumes:
   mongodb-data:
+  static_volume:
+  pdf_volume:
