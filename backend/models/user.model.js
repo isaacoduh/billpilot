@@ -63,14 +63,14 @@ const userSchema = new Schema(
         message: "Passwords do not match",
       },
     },
-    isEmailVerified: { type: Boolean, required: true, default: true },
+    isEmailVerified: { type: Boolean, required: true, default: false },
     provider: { type: String, required: true, default: "email" },
     googleID: String,
     avatar: String,
     businessName: String,
     phoneNumber: {
       type: String,
-      default: "+4412345678",
+      default: "+447412123457",
       validate: [
         validator.isMobilePhone,
         "Your phone number must begin with a '+', followed by your country code then an actual number e.g. +4412345678",
