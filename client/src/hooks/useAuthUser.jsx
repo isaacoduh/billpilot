@@ -7,6 +7,7 @@ const useAuthUser = () => {
   let isAdmin = false;
 
   let accessRight = "User";
+
   if (token) {
     const decodedToken = decodeToken(token);
     const { roles } = decodedToken;
