@@ -9,6 +9,8 @@ import NotFound from "./components/NotFound";
 import { customTheme } from "./customTheme";
 import useTitle from "./hooks/useTitle";
 import HomePage from "./pages/HomePage";
+import VerifiedPage from "./features/auth/pages/VerifiedPage";
+import RegisterPage from "./features/auth/pages/RegisterPage";
 
 const App = () => {
   useTitle("Bill Pilot - Home");
@@ -19,7 +21,8 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
-
+          <Route path="register" element={<RegisterPage />} />
+          <Route path="auth/verify" element={<VerifiedPage />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
