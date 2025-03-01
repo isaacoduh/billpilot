@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { Formik } from "formik";
 import { useEffect } from "react";
-import { GoMailRead } from "react-icons/go";
+import { GoMail } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
@@ -93,7 +93,7 @@ const PasswordResetRequestPage = () => {
                       }}
                     >
                       {" "}
-                      <GoMailRead className="auth-svg" />
+                      <GoMail className="auth-svg" />
                       <Typography variant="h2">Enter Your Email</Typography>
                     </Box>
                     <StyledDivider />
