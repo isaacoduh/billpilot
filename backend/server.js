@@ -9,6 +9,7 @@ import mongoSanitize from "express-mongo-sanitize";
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
+import customerRoutes from "./routes/customer.routes.js";
 import { apiLimiter } from "./middleware/apiLimiter.js";
 import passport from "passport";
 import googleAuth from "./config/passportSetup.js";
@@ -39,6 +40,7 @@ app.get("/api/v1/test", (req, res) => {
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/user", apiLimiter, userRoutes);
+app.use("/api/v1/customer", apiLimiter, customerRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

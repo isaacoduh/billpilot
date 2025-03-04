@@ -1,7 +1,7 @@
 import "dotenv/config";
 import passport from "passport";
 import GoogleStrategy from "passport-google-oauth20";
-import User from "../models/user.model";
+import User from "../models/user.model.js";
 
 const domainURL = process.env.DOMAIN;
 const googleCallbackURL = process.env.GOOGLE_CALLBACK_URL;
