@@ -1,270 +1,159 @@
-import Logout from "@mui/icons-material/Logout";
-import SentimentSatisfiedAltTwoToneIcon from "@mui/icons-material/SentimentSatisfiedAltTwoTone";
-import SpeedTwoToneIcon from "@mui/icons-material/SpeedTwoTone";
-import {
-  Avatar,
-  Box,
-  ButtonBase,
-  Divider,
-  Grid,
-  ListItemIcon,
-  Menu,
-  MenuItem,
-  Stack,
-  styled,
-  Typography,
-} from "@mui/material";
-import { deepOrange } from "@mui/material/colors";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import MenuIcon from "@mui/icons-material/Menu";
+import { Box, CssBaseline, Divider, Stack, Toolbar } from "@mui/material";
+import MuiAppBar from "@mui/material/AppBar";
+import MuiDrawer from "@mui/material/Drawer";
+import IconButton from "@mui/material/IconButton";
+import { styled, useTheme } from "@mui/material/styles";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { isExpired } from "react-jwt";
+import { logOut } from "../../features/auth/authSlice";
 import { toast } from "react-toastify";
-import { useLogoutUserMutation } from "../../features/auth/authApiSlice";
-import useAuthUser from "../../hooks/useAuthUser";
+import { useNavigate } from "react-router-dom";
+import Logo from "./Logo";
+import MenuList from "./MenuList";
+import ProfileInfo from "./ProfileInfo";
 
-const StyledMenuItem = styled(MenuItem)({
-  "&:hover": {
-    backgroundColor: "#555a64",
+const drawerWidth = 240;
+
+const openedMixin = (theme) => ({
+  width: drawerWidth,
+  transition: theme.transitions.create("width", {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.enteringScreen,
+  }),
+  overflowX: "hidden",
+});
+
+const closedMixin = (theme) => ({
+  transition: theme.transitions.create("width", {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  overflowX: "hidden",
+  width: `calc(${theme.spacing(7)} + 1px)`,
+  [theme.breakpoints.up("sm")]: {
+    width: `calc(${theme.spacing(8)} + 1px)`,
   },
-  width: 240,
-  height: 50,
 });
 
-const StyledProfileDivider = styled(Divider)({
-  height: "2px",
-  borderColor: "#ffffff63",
-});
+const DrawerHeader = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "flex-end",
+  padding: theme.spacing(0, 1),
+  // necessary for content to be below app bar
+  ...theme.mixins.toolbar,
+}));
 
-const ProfileInfo = ({ user }) => {
-  const { isAdmin } = useAuthUser();
+const AppBar = styled(MuiAppBar, {
+  shouldForwardProp: (prop) => prop !== "open",
+})(({ theme, open }) => ({
+  zIndex: theme.zIndex.drawer + 1,
+  transition: theme.transitions.create(["width", "margin"], {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  ...(open && {
+    marginLeft: drawerWidth,
+    width: `calc(100% - ${drawerWidth}px)`,
+    transition: theme.transitions.create(["width", "margin"], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  }),
+}));
+
+const Drawer = styled(MuiDrawer, {
+  shouldForwardProp: (prop) => prop !== "open",
+})(({ theme, open }) => ({
+  width: drawerWidth,
+  flexShrink: 0,
+  whiteSpace: "nowrap",
+  boxSizing: "border-box",
+  ...(open && {
+    ...openedMixin(theme),
+    "& .MuiDrawer-paper": openedMixin(theme),
+  }),
+  ...(!open && {
+    ...closedMixin(theme),
+    "& .MuiDrawer-paper": closedMixin(theme),
+  }),
+}));
+
+const AuthNav = () => {
+  const { user, googleToken } = useSelector((state) => state.auth);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const theme = useTheme();
+  const [open, setOpen] = useState(false);
 
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
-
-  const handleOpenUserMenu = (event) => {
-    setAnchorEl(event.currentTarget);
+  const handleDrawerOpen = () => {
+    setOpen(true);
   };
 
-  const handleCloseUserMenu = () => {
-    setAnchorEl(null);
-  };
-
-  const [logoutUser, { data, isSuccess }] = useLogoutUserMutation();
-
-  const handleLogout = async () => {
-    try {
-      await logoutUser().unwrap();
-      navigate("/login");
-    } catch (err) {
-      toast.error(err);
-    }
+  const handleDrawerClose = () => {
+    setOpen(false);
   };
 
   useEffect(() => {
-    if (isSuccess) {
-      const message = data?.message;
-      toast.success(message);
+    if (googleToken) {
+      const isMyTokenExpired = isExpired(googleToken);
+
+      if (isMyTokenExpired) {
+        dispatch(logOut());
+        navigate("/login");
+        toast.warning("Your session has expired, login again");
+      }
     }
-  }, [isSuccess, data]);
+  }, [navigate, dispatch, googleToken]);
 
   return (
-    <Box sx={{ flexShrink: 0, ml: 0.75 }}>
-      <ButtonBase
-        sx={{
-          p: 0.25,
-          bgColor: open ? "#E0E0E0" : "transparent",
-          borderRadius: 10,
-          "&:hover": { bgcolor: "#555a64" },
-        }}
-        aria-label="open profile"
-        ref={anchorEl}
-        aria-controls={open ? "profile-grow" : undefined}
-        aria-haspopup="true"
-        onClick={handleOpenUserMenu}
-      >
-        {user?.avatar ? (
-          <Stack
-            direction="row"
-            spacing={2}
-            alignItems="center"
-            sx={{ p: 0.5 }}
-          >
-            <Avatar
-              alt="profile user"
-              src={user.avatar}
-              sx={{ width: 48, height: 48 }}
-            />
-            <Typography variant="h6">{user?.username}</Typography>
-          </Stack>
-        ) : (
-          <Stack
-            direction="row"
-            spacing={2}
-            alignItems="center"
-            sx={{ p: 0.5 }}
-          >
-            <Avatar sx={{ bgcolor: deepOrange[700] }}>
-              {user?.username.charAt(0).toUpperCase()}
-            </Avatar>
-            <Typography variant="h6">{user?.username}</Typography>
-          </Stack>
-        )}
-      </ButtonBase>
-
-      {/* Menu Items */}
-      <Menu
-        sx={{ mt: "45px" }}
-        id="account-menu"
-        anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        keepMounted
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        open={open}
-        onClose={handleCloseUserMenu}
-        onClick={handleCloseUserMenu}
-        PaperProps={{
-          elevation: 0,
-          sx: {
-            overflow: "visible",
-            filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-            mt: 1.5,
-            bgcolor: "#000000",
-            color: "#ffffff",
-            borderRadius: "10px",
-
-            "& .MuiAvatar-root": {
-              width: 43,
-              height: 42,
-              ml: -0.5,
-              mr: 1,
-            },
-            "&:before": {
-              content: '""',
-              display: "block",
-              position: "absolute",
-              top: 0,
-              right: 14,
-              width: 10,
-              height: 10,
-              bgcolor: "#000000",
-              transform: "translateY(-50%) rotate(45deg)",
-              zIndex: 0,
-            },
-          },
-        }}
-      >
-        <Box>
-          <Grid container justifyContent="space-between" alignItems="center">
-            <Stack>
-              {/* profile menu item */}
-              <StyledMenuItem onClick={() => navigate("/profile")}>
-                <Grid item>
-                  <Stack direction="row" spacing={1.25} alignItems="center">
-                    {user?.avatar ? (
-                      <Stack
-                        direction="row"
-                        spacing={1.25}
-                        alignItems="center"
-                        sx={{ p: 0.5 }}
-                      >
-                        <Avatar
-                          alt="profile user"
-                          src={user?.avatar}
-                          sx={{
-                            width: 48,
-                            height: 48,
-                          }}
-                        />
-                        <Stack>
-                          <Typography variant="h6">
-                            {user?.firstName} {user?.lastName}
-                          </Typography>
-                          <Typography variant="body2">
-                            {isAdmin ? "Project Admin" : "Product User"}
-                          </Typography>
-                        </Stack>
-                      </Stack>
-                    ) : (
-                      <Stack
-                        direction="row"
-                        spacing={1.25}
-                        alignItems="center"
-                        sx={{ p: 0.5 }}
-                      >
-                        <Avatar
-                          sx={{
-                            bgcolor: deepOrange[700],
-                          }}
-                        >
-                          {user?.username.charAt(0).toUpperCase()}
-                        </Avatar>
-                        <Stack>
-                          <Typography variant="h6">
-                            {user?.firstName} {user?.lastName}
-                          </Typography>
-                          <Typography variant="body2" color="#CFD8DC">
-                            {isAdmin ? "Project Admin" : "Product User"}
-                          </Typography>
-                        </Stack>
-                      </Stack>
-                    )}
-                  </Stack>
-                </Grid>
-              </StyledMenuItem>
-              <StyledProfileDivider />
-
-              {/* view profile */}
-              <StyledMenuItem onClick={() => navigate("/profile")}>
-                <Grid item>
-                  <Stack direction="row" alignItems="center" spacing={2}>
-                    <ListItemIcon>
-                      <SentimentSatisfiedAltTwoToneIcon
-                        color="blue"
-                        sx={{ fontSize: 45 }}
-                      />
-                    </ListItemIcon>
-                    <Typography variant="h6">View Profile</Typography>
-                  </Stack>
-                </Grid>
-              </StyledMenuItem>
-              <StyledProfileDivider />
-              {/* Dashboard */}
-              <StyledMenuItem onClick={() => navigate("/dashboard")}>
-                <Grid item>
-                  <Stack direction="row" alignItems="center" spacing={2}>
-                    <ListItemIcon>
-                      <SpeedTwoToneIcon color="yellow" sx={{ fontSize: 45 }} />
-                    </ListItemIcon>
-                    <Typography variant="h6">Dashboard</Typography>
-                  </Stack>
-                </Grid>
-              </StyledMenuItem>
-              <StyledProfileDivider />
-
-              {/* logout */}
-              <StyledMenuItem onClick={handleLogout}>
-                <Grid item>
-                  <Stack direction="row" alignItems="center" spacing={2}>
-                    <ListItemIcon>
-                      <Logout color="green" sx={{ fontSize: 45 }} />
-                    </ListItemIcon>
-                    <Typography variant="h6">Logout</Typography>
-                  </Stack>
-                </Grid>
-              </StyledMenuItem>
-            </Stack>
-          </Grid>
-          <Divider />
-        </Box>
-      </Menu>
+    <Box sx={{ flexGrow: 1 }}>
+      <CssBaseline />
+      <AppBar position="fixed" open={open}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+        >
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              sx={{
+                marginRight: 5,
+                ...(open && { display: "none" }),
+              }}
+            >
+              <MenuIcon fontSize="large" />
+            </IconButton>
+            <Logo />
+          </Toolbar>
+          <Box>
+            <ProfileInfo user={user} />
+          </Box>
+        </Stack>
+      </AppBar>
+      <Drawer variant="permanent" open={open}>
+        <DrawerHeader>
+          <IconButton onClick={handleDrawerClose}>
+            {theme.direction === "rtl" ? (
+              <ChevronRightIcon color="success" fontSize="large" />
+            ) : (
+              <ChevronLeftIcon color="success" fontSize="large" />
+            )}
+          </IconButton>
+        </DrawerHeader>
+        <Divider />
+        <MenuList />
+      </Drawer>
     </Box>
   );
 };
 
-export default ProfileInfo;
+export default AuthNav;

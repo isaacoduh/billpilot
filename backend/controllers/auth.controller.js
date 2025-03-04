@@ -124,7 +124,7 @@ const loginUser = asyncHandler(async (req, res) => {
     const accessToken = jwt.sign(
       { id: existingUser._id, roles: existingUser.roles },
       process.env.JWT_ACCESS_SECRET_KEY,
-      { expiresIn: "1h" }
+      { expiresIn: "10m" }
     );
 
     const newRefreshToken = jwt.sign(
@@ -276,7 +276,7 @@ const newAccessToken = asyncHandler(async (req, res) => {
         const accessToken = jwt.sign(
           { id: existingUser._id, roles: existingUser.roles },
           process.env.JWT_ACCESS_SECRET_KEY,
-          { expiresIn: "1h" }
+          { expiresIn: "10m" }
         );
         const newRefreshToken = jwt.sign(
           { id: existingUser._id },
