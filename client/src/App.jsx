@@ -21,6 +21,8 @@ import { ROLES } from "./config/roles";
 import UsersList from "./features/users/pages/UsersListPage";
 import DashboardPage from "./pages/DashboardPage";
 import AuthRequired from "./components/AuthRequired";
+import ProfilePage from "./features/users/pages/ProfilePage";
+import EditProfileForm from "./features/users/pages/EditProfileForm";
 
 const App = () => {
   useTitle("Bill Pilot - Home");
@@ -46,6 +48,8 @@ const App = () => {
           {/* Private Routes - Users */}
           <Route element={<AuthRequired allowedRoles={[ROLES.User]} />}>
             <Route path="dashboard" element={<DashboardPage />} />
+            <Route path="profile" element={<ProfilePage />} />
+            <Route path="edit-profile" element={<EditProfileForm />} />
           </Route>
 
           {/* Private Routes - Admin */}
