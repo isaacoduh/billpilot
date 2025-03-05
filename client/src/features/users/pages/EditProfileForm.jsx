@@ -111,7 +111,7 @@ const EditProfileForm = () => {
         avatar,
       };
       await updateMyProfile(userData).unwrap();
-    } catch (error) {
+    } catch (err) {
       const message = err.data.message;
       toast.error(message);
     }

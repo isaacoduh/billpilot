@@ -71,7 +71,7 @@ const UserListPage = () => {
     try {
       await deactivateUser(id).unwrap();
       toast.success("User Deactivated");
-    } catch (error) {
+    } catch (err) {
       const message = err.data.message;
       toast.error(message);
     }
@@ -83,7 +83,7 @@ const UserListPage = () => {
         await deleteUser(id).unwrap();
         toast.success("User deleted successfully");
       }
-    } catch (error) {
+    } catch (err) {
       const message = err.data.message;
       toast.error(message);
     }

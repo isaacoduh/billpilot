@@ -73,7 +73,7 @@ const ProfilePage = () => {
       await deleteMyAccount().unwrap();
       dispatch(logOut());
       toast.success("Your account has been deleted. Sad to see you go!");
-    } catch (error) {
+    } catch (err) {
       const message = err.data.message;
       toast.error(message);
     }

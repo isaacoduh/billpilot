@@ -23,6 +23,10 @@ import DashboardPage from "./pages/DashboardPage";
 import AuthRequired from "./components/AuthRequired";
 import ProfilePage from "./features/users/pages/ProfilePage";
 import EditProfileForm from "./features/users/pages/EditProfileForm";
+import CustomersPage from "./features/customers/pages/CustomerPage";
+import CustomerCreateForm from "./features/customers/pages/CustomerCreateForm";
+import SingleCustomerPage from "./features/customers/pages/SingleCustomerPage";
+import CustomerEditForm from "./features/customers/pages/CustomerEditForm";
 
 const App = () => {
   useTitle("Bill Pilot - Home");
@@ -50,6 +54,16 @@ const App = () => {
             <Route path="dashboard" element={<DashboardPage />} />
             <Route path="profile" element={<ProfilePage />} />
             <Route path="edit-profile" element={<EditProfileForm />} />
+            <Route path="customers" element={<CustomersPage />} />
+            <Route path="create-customer" element={<CustomerCreateForm />} />
+            <Route
+              path="single-customer/:custId"
+              element={<SingleCustomerPage />}
+            />
+            <Route
+              path="edit-customer/:custId"
+              element={<CustomerEditForm />}
+            />
           </Route>
 
           {/* Private Routes - Admin */}
