@@ -14,6 +14,9 @@ import {
   TableRow,
   Checkbox,
   Typography,
+  Tooltip,
+  styled,
+  tooltipClasses,
 } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
 import GroupIcon from "@mui/icons-material/Group";
@@ -27,7 +30,11 @@ import StyledTableCell from "../../../components/StyledTableCell";
 import StyledTableRow from "../../../components/StyledTableRow";
 import TablePaginationActions from "../../../components/TablePaginationActions";
 import useTitle from "../../../hooks/useTitle";
-import { useGetAllUsersQuery } from "../usersApiSlice";
+import {
+  useGetAllUsersQuery,
+  useDeleteUserMutation,
+  useDeactivateUserMutation,
+} from "../usersApiSlice";
 
 const UserListPage = () => {
   useTitle("All Users - Bill Pilot");
@@ -43,6 +50,9 @@ const UserListPage = () => {
     }
   );
 
+  const [deleteUser] = useDeleteUserMutation();
+  const [deactivateUser] = useDeactivateUserMutation();
+
   const rows = data?.users;
 
   const emptyRows =
@@ -57,6 +67,28 @@ const UserListPage = () => {
     setPage(0);
   };
 
+  const deactivateUserHandler = async (id) => {
+    try {
+      await deactivateUser(id).unwrap();
+      toast.success("User Deactivated");
+    } catch (error) {
+      const message = err.data.message;
+      toast.error(message);
+    }
+  };
+
+  const deleteHandler = async (id) => {
+    try {
+      if (window.confirm("Are you sure you want to delete this user!")) {
+        await deleteUser(id).unwrap();
+        toast.success("User deleted successfully");
+      }
+    } catch (error) {
+      const message = err.data.message;
+      toast.error(message);
+    }
+  };
+
   useEffect(() => {
     if (isError) {
       const message = error.data.message;
@@ -64,6 +96,17 @@ const UserListPage = () => {
     }
   }, [error, isError]);
 
+  const CustomTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} arrow classes={{ popper: className }} />
+  ))(({ theme }) => ({
+    [`& .${tooltipClasses.arrow}`]: {
+      color: theme.palette.common.black,
+    },
+    [`& .${tooltipClasses.tooltip}`]: {
+      backgroundColor: theme.palette.common.black,
+      fontSize: 18,
+    },
+  }));
   return (
     <Container component="main" maxWidth="lg" sx={{ mt: 10 }}>
       <CssBaseline />
@@ -147,9 +190,13 @@ const UserListPage = () => {
                         {moment(row?.dueDate).format("DD-MM-YYYY")}
                       </StyledTableCell>
                       <StyledTableCell align="right">
-                        <Box>
-                          <Checkbox />
-                        </Box>
+                        <CustomTooltip title="Uncheck to deactivate user">
+                          <Checkbox
+                            color="success"
+                            checked={row?.active}
+                            onChange={() => deactivateUserHandler(row._id)}
+                          />
+                        </CustomTooltip>
                       </StyledTableCell>
                       <StyledTableCell align="right">
                         <Box>
@@ -158,6 +205,9 @@ const UserListPage = () => {
                             fontSize="medium"
                             sx={{
                               cursor: "pointer",
+                            }}
+                            onClick={() => {
+                              deleteHandler(row._id);
                             }}
                           />
                         </Box>
