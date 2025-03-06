@@ -19,7 +19,7 @@ import PasswordResetRequestPage from "./features/auth/pages/PasswordResetRequest
 import PasswordResetPage from "./features/auth/pages/PasswordResetPage";
 import { ROLES } from "./config/roles";
 import UsersList from "./features/users/pages/UsersListPage";
-import DashboardPage from "./pages/DashboardPage";
+import DashboardPage from "./features/dashboard/pages/DashboardPage";
 import AuthRequired from "./components/AuthRequired";
 import ProfilePage from "./features/users/pages/ProfilePage";
 import EditProfileForm from "./features/users/pages/EditProfileForm";
@@ -54,7 +54,6 @@ const App = () => {
 
           {/* Private Routes - Users */}
           <Route element={<AuthRequired allowedRoles={[ROLES.User]} />}>
-            <Route path="dashboard" element={<DashboardPage />} />
             <Route path="profile" element={<ProfilePage />} />
             <Route path="edit-profile" element={<EditProfileForm />} />
             <Route path="customers" element={<CustomersPage />} />
@@ -71,6 +70,7 @@ const App = () => {
             <Route path="create-doc" element={<DocCreateEditForm />} />
             <Route path="edit-doc/:id" element={<DocCreateEditForm />} />
             <Route path="document/:id" element={<SingleDocumentPage />} />
+            <Route path="dashboard" element={<DashboardPage />} />
           </Route>
 
           {/* Private Routes - Admin */}
