@@ -6,6 +6,10 @@ import {
   getAllUserDocuments,
   getSingleUserDocument,
   updateDocument,
+  generatePDF,
+  getPDF,
+  sendDocument,
+  createDocumentPayment,
 } from "../controllers/document.controller.js";
 
 const router = express.Router();
@@ -22,5 +26,14 @@ router
   .patch(checkAuth, updateDocument)
   .get(checkAuth, getSingleUserDocument)
   .delete(checkAuth, deleteDocument);
+
+// generate PDF document at /api/v1/document/generate-pdf
+router.route("/generate-pdf").post(generatePDF);
+
+// get pdf at /api/v1/document/get-pdf
+router.route("/get-pdf").get(getPDF);
+
+// send email with pdf at /api/v1/document/send-document
+router.route("/send-pdf").post(sendDocument);
 
 export default router;
