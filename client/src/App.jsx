@@ -27,6 +27,8 @@ import CustomersPage from "./features/customers/pages/CustomerPage";
 import CustomerCreateForm from "./features/customers/pages/CustomerCreateForm";
 import SingleCustomerPage from "./features/customers/pages/SingleCustomerPage";
 import CustomerEditForm from "./features/customers/pages/CustomerEditForm";
+import DocumentsPage from "./features/documents/pages/DocumentsPage";
+import DocCreateEditForm from "./features/documents/pages/DocCreateEditForm";
 
 const App = () => {
   useTitle("Bill Pilot - Home");
@@ -64,6 +66,8 @@ const App = () => {
               path="edit-customer/:custId"
               element={<CustomerEditForm />}
             />
+            <Route path="documents" element={<DocumentsPage />} />
+            <Route path="create-doc" element={<DocCreateEditForm />} />
           </Route>
 
           {/* Private Routes - Admin */}
