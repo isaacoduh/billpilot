@@ -36,4 +36,6 @@ router.route("/get-pdf").get(getPDF);
 // send email with pdf at /api/v1/document/send-document
 router.route("/send-pdf").post(sendDocument);
 
+router.route("/:id/payment").post(checkAuth, createDocumentPayment);
+
 export default router;

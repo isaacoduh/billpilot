@@ -29,6 +29,7 @@ import SingleCustomerPage from "./features/customers/pages/SingleCustomerPage";
 import CustomerEditForm from "./features/customers/pages/CustomerEditForm";
 import DocumentsPage from "./features/documents/pages/DocumentsPage";
 import DocCreateEditForm from "./features/documents/pages/DocCreateEditForm";
+import SingleDocumentPage from "./features/documents/pages/SingleDocumentPage";
 
 const App = () => {
   useTitle("Bill Pilot - Home");
@@ -68,6 +69,8 @@ const App = () => {
             />
             <Route path="documents" element={<DocumentsPage />} />
             <Route path="create-doc" element={<DocCreateEditForm />} />
+            <Route path="edit-doc/:id" element={<DocCreateEditForm />} />
+            <Route path="document/:id" element={<SingleDocumentPage />} />
           </Route>
 
           {/* Private Routes - Admin */}

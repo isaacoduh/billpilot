@@ -20,7 +20,7 @@ export const documentsApiSlice = baseApiSlice.injectEndpoints({
     }),
     updateDoc: builder.mutation({
       query: ({ id, ...rest }) => ({
-        url: `/documents/${id}`,
+        url: `/document/${id}`,
         method: "PATCH",
         body: rest,
       }),
